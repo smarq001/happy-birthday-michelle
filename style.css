@@ -183,11 +183,22 @@ h1 {
 }
 
 /* Allow scrolling on the celebration page so the love letter is reachable on mobile */
-body:has(.yes-container) {
-    overflow-y: auto;
+html:has(.yes-page),
+body.yes-page {
+    overflow: visible;
     overflow-x: hidden;
-    align-items: flex-start;
-    padding: 24px 0 48px;
+    height: auto;
+}
+
+body.yes-page {
+    display: block;
+    min-height: 100vh;
+    padding: 24px 16px 56px;
+}
+
+body.yes-page .container.yes-container {
+    margin: 0 auto;
+    max-width: 720px;
 }
 
 .love-letter {
