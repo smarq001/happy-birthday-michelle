@@ -6,7 +6,7 @@
     <title>Yay! 🎉</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;800;900&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="style.css?v=3">
+    <link rel="stylesheet" href="style.css?v=4">
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.2/dist/confetti.browser.min.js"></script>
 </head>
 <body class="yes-page">
@@ -35,8 +35,25 @@
                 <p>🐾 <strong>P.S. from Beau &amp; Juno:</strong> we saved you extra tail wags, the warmest spot on the couch, and approximately 1,000 kisses. We love you, Mom. 🦴💛</p>
             </div>
         </div>
+
+        <div class="bark-section">
+            <button id="bark-btn" class="bark-btn" onclick="bark()">🐾 Hear from Beau &amp; Juno!</button>
+            <div class="bark-flash" id="bark-flash"></div>
+            <div class="dog-row">
+                <div class="dog-card">
+                    <div class="dog-header">🦮 Beau</div>
+                    <div class="speech-bubble" id="beau-bubble">waiting to bark...</div>
+                </div>
+                <div class="dog-card">
+                    <div class="dog-header">🐕 Juno</div>
+                    <div class="speech-bubble" id="juno-bubble">waiting to bark...</div>
+                </div>
+            </div>
+        </div>
     </div>
 
-    <script src="yes-script.js"></script>
+    <div class="balloons-layer" id="balloons-layer" aria-hidden="true"></div>
+
+    <script src="yes-script.js?v=4"></script>
 </body>
 </html>
