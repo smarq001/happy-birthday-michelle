@@ -94,33 +94,68 @@ function flashBarkText() {
 }
 
 let audioCtx = null
-function playBark() {
+function ensureAudioCtx() {
     try {
         if (!audioCtx) {
-            audioCtx = new (window.AudioContext || window.webkitAudioContext)()
+            const AC = window.AudioContext || window.webkitAudioContext
+            if (!AC) return null
+            audioCtx = new AC()
         }
-        // Two quick "ruffs"
-        playRuff(audioCtx, 0)
-        playRuff(audioCtx, 0.18)
+        if (audioCtx.state === 'suspended') {
+            audioCtx.resume()
+        }
+        return audioCtx
     } catch (e) {
-        // Audio unavailable; silent fallback
+        return null
     }
+}
+
+function playBark() {
+    const ctx = ensureAudioCtx()
+    if (!ctx) return
+    playRuff(ctx, 0)
+    playRuff(ctx, 0.22)
 }
 
 function playRuff(ctx, delay) {
     const t0 = ctx.currentTime + delay
-    const osc = ctx.createOscillator()
+    const dur = 0.22
+
+    // Main growly tone
+    const osc1 = ctx.createOscillator()
+    osc1.type = 'sawtooth'
+    osc1.frequency.setValueAtTime(520, t0)
+    osc1.frequency.exponentialRampToValueAtTime(260, t0 + 0.09)
+    osc1.frequency.exponentialRampToValueAtTime(180, t0 + dur)
+
+    // Bright harmonic for "ruff" bite
+    const osc2 = ctx.createOscillator()
+    osc2.type = 'square'
+    osc2.frequency.setValueAtTime(780, t0)
+    osc2.frequency.exponentialRampToValueAtTime(380, t0 + 0.1)
+
+    // Low-pass to soften and keep it warm
+    const filter = ctx.createBiquadFilter()
+    filter.type = 'lowpass'
+    filter.frequency.setValueAtTime(1800, t0)
+    filter.frequency.exponentialRampToValueAtTime(800, t0 + dur)
+    filter.Q.value = 4
+
     const gain = ctx.createGain()
-    osc.type = 'sawtooth'
-    osc.frequency.setValueAtTime(260, t0)
-    osc.frequency.exponentialRampToValueAtTime(140, t0 + 0.09)
     gain.gain.setValueAtTime(0.0001, t0)
-    gain.gain.exponentialRampToValueAtTime(0.25, t0 + 0.01)
-    gain.gain.exponentialRampToValueAtTime(0.0001, t0 + 0.12)
-    osc.connect(gain)
+    gain.gain.exponentialRampToValueAtTime(0.6, t0 + 0.015)
+    gain.gain.exponentialRampToValueAtTime(0.15, t0 + 0.1)
+    gain.gain.exponentialRampToValueAtTime(0.0001, t0 + dur)
+
+    osc1.connect(filter)
+    osc2.connect(filter)
+    filter.connect(gain)
     gain.connect(ctx.destination)
-    osc.start(t0)
-    osc.stop(t0 + 0.14)
+
+    osc1.start(t0)
+    osc2.start(t0)
+    osc1.stop(t0 + dur + 0.02)
+    osc2.stop(t0 + dur + 0.02)
 }
 
 /* ——— Balloons ——— */
